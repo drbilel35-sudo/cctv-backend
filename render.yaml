@@ -1,0 +1,37 @@
+# Simplified Render Blueprint
+version: 1
+
+services:
+  - type: web
+    name: cctv-backend
+    env: node
+    plan: free
+    region: ohio
+    branch: main
+    
+    buildCommand: npm install
+    startCommand: npm start
+    
+    healthCheckPath: /health
+    
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: JWT_SECRET
+        generateValue: true
+      - key: MONGODB_URI
+        fromDatabase:
+          name: cctv-database
+          property: connectionString
+      - key: CORS_ORIGIN
+        value: https://your-frontend-app.onrender.com
+      - key: ENABLE_HLS_STREAMING
+        value: "true"
+
+databases:
+  - name: cctv-database
+    plan: free
+    region: ohio
+    databaseName: cctv_streaming
