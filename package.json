@@ -4,13 +4,16 @@
   "description": "Backend for CCTV Camera Streaming Application",
   "main": "server.js",
   {
+  {
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "build": "npm install",
+    "validate-env": "node scripts/validate-env.js",
+    "render-build": "npm run validate-env && npm install",
     "test": "jest",
-    "render-setup": "npm install && npm run build"
-  },
+    "test:env": "NODE_ENV=test npm run validate-env"
+  }
+}, 
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=8.0.0"
