@@ -20,8 +20,13 @@ app.use(helmet({
 }));
 
 // CORS Configuration
+// CORS Configuration for Render
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  origin: [
+    'http://localhost:3000',
+    'https://your-frontend-app.onrender.com',
+    process.env.CORS_ORIGIN
+  ].filter(Boolean),
   credentials: true
 }));
 
