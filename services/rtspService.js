@@ -143,4 +143,69 @@ exports.recordStream = (camera, duration = 3600) => {
       // Ensure recordings directory exists
       const recordingsDir = path.dirname(outputPath);
       if (!fs.existsSync(recordingsDir)) {
-        fs.mkdirSync(recordingsDir, { recursive: true });
+       
+      fs.mkdirSync(recordingsDir, { recursive: true });
+
+              // Construct RTSP URL with credentials
+      let rtspUrl = camera.streamUrl;
+      if (camera.username && camera.password) {
+        const url = new URL(camera.streamUrl);
+        url.username = camera.username;
+        url.password = camera.password;
+        rtspUrl = url.toString();
+      }
+
+      const command = ffmpeg(rtspUrl)
+        .output(outputPath)
+        .videoCodec('libx264')
+        .audioCodec('aac')
+        .duration(duration)
+        .on('start', (commandLine) => {
+          logger.info(`Recording started: ${filename}`);
+          logger.debug(`FFmpeg command: ${commandLine}`);
+        })
+        .on('end', () => {
+          logger.info(`Recording completed: ${filename}`);
+          resolve({
+            filename,
+            path: outputPath,
+            duration,
+            size: fs.statSync(outputPath).size
+          });
+        })
+        .on('error', (error) => {
+          logger.error(`Recording error: ${error.message}`);
+          reject(error);
+        })
+        .on('stderr', (stderrLine) => {
+          logger.debug(`FFmpeg: ${stderrLine}`);
+        });
+
+      command.run();
+
+    } catch (error) {
+      logger.error('Error starting recording:', error);
+      reject(error);
+    }
+  });
+};
+
+// Get stream information
+exports.getStreamInfo = (streamKey) => {
+  const streamData = streams.get(streamKey);
+  return streamData ? {
+    streamKey,
+    port: streamData.port,
+    uptime: Date.now() - streamData.startTime,
+    status: 'active'
+  } : null;
+};
+
+// Get all active RTSP streams
+exports.getActiveRTSPStreams = () => {
+  return Array.from(streams.entries()).map(([streamKey, data]) => ({
+    streamKey,
+    port: data.port,
+    uptime: Date.now() - data.startTime
+  }));
+};
