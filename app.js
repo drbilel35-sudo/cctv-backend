@@ -8,7 +8,12 @@ const authRoutes = require('./routes/auth');
 const cameraRoutes = require('./routes/cameras');
 const streamRoutes = require('./routes/streams');
 const adminRoutes = require('./routes/admin');
+// Add this to your app.js after other routes
+const hlsRoutes = require('./routes/hls');
+app.use('/hls', hlsRoutes);
 
+// Serve recordings statically
+app.use('/recordings', express.static(path.join(__dirname, 'public/recordings')));
 const errorHandler = require('./middleware/errorHandler');
 const logger = require('./utils/logger');
 
