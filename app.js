@@ -11,7 +11,16 @@ const adminRoutes = require('./routes/admin');
 // Add this to your app.js after other routes
 const hlsRoutes = require('./routes/hls');
 app.use('/hls', hlsRoutes);
+require('dotenv').config();
 
+// Validate environment on startup
+require('./scripts/validate-env')();
+
+const config = require('./config/env');
+
+console.log(`Starting application in ${config.env} mode`);
+console.log(`Database: ${config.mongoose.url}`);
+console.log(`Streaming: HLS ${config.streaming.enableHLS ? 'enabled' : 'disabled'}`);
 // Serve recordings statically
 app.use('/recordings', express.static(path.join(__dirname, 'public/recordings')));
 const errorHandler = require('./middleware/errorHandler');
