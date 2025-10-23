@@ -1,70 +1,16 @@
-# Render Blueprint for CCTV Streaming Application
 version: 1
 
-# Environment variables shared across all services
-environmentVariables:
-  - key: NODE_ENV
-    value: production
-  - key: JWT_SECRET
-    generateValue: true
-  - key: JWT_EXPIRES_IN
-    value: 1h
-  - key: ENABLE_HLS_STREAMING
-    value: "true"
-  - key: RATE_LIMIT_WINDOW_MS
-    value: "900000"
-  - key: RATE_LIMIT_MAX_REQUESTS
-    value: "50"
-  - key: MAX_CONCURRENT_STREAMS
-    value: "3"
-  - key: HLS_SEGMENT_DURATION
-    value: "4"
-  - key: HLS_LIST_SIZE
-    value: "6"
-  - key: CAMERA_HEALTH_CHECK_INTERVAL
-    value: "30000"
-  - key: LOG_LEVEL
-    value: warn
-  - key: LOG_FILE_ENABLED
-    value: "false"
-
-# Services definition
 services:
-  # Main Backend API Service
   - type: web
     name: cctv-backend
     env: node
     plan: free
-    # REMOVED: region: ohio  <-- This line causes the error
-    branch: main
-    rootDir: .
-    
-    # Build and Start commands
-    buildCommand: |
-      echo "Installing dependencies..."
-      npm install
-      echo "Building application..."
-      npm run build || true
-      echo "Validating environment..."
-      npm run validate-env || true
-      
+    buildCommand: npm install
     startCommand: npm start
-    
-    # Health Check
-    healthCheckPath: /health
-    initialDelaySec: 60
-    
-    # Environment Variables (service-specific)
     envVars:
+      - key: NODE_ENV
+        value: production
       - key: PORT
         value: 10000
       - key: MONGODB_URI
         value: "mongodb+srv://bilsheikh5_db_user:Poppkgo%401@cluster0.lo7sj9t.mongodb.net/cctv_streaming?retryWrites=true&w=majority&appName=Cluster0"
-      - key: CORS_ORIGIN
-        value: "https://your-frontend-app.onrender.com"  # Update this with your frontend URL
-      - key: RENDER
-        value: "true"
-      - key: RECORDINGS_DIR
-        value: /tmp/recordings
-      - key: HLS_OUTPUT_DIR
-        value: /tmp/hls
