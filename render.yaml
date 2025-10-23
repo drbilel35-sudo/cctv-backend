@@ -20,5 +20,3 @@ services:
         value: "mongodb+srv://bilsheikh5_db_user:Poppkgo%401@cluster0.lo7sj9t.mongodb.net/cctv_streaming?retryWrites=true&w=majority&appName=Cluster0"
       - key: CORS_ORIGIN
         value: "http://localhost:3000"
-      - key: ENABLE_HLS_STREAMING
-        value: "true"
