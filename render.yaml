@@ -5,12 +5,20 @@ services:
     name: cctv-backend
     env: node
     plan: free
+    branch: main
     buildCommand: npm install
     startCommand: npm start
+    healthCheckPath: /health
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
         value: 10000
+      - key: JWT_SECRET
+        generateValue: true
       - key: MONGODB_URI
         value: "mongodb+srv://bilsheikh5_db_user:Poppkgo%401@cluster0.lo7sj9t.mongodb.net/cctv_streaming?retryWrites=true&w=majority&appName=Cluster0"
+      - key: CORS_ORIGIN
+        value: "http://localhost:3000"
+      - key: ENABLE_HLS_STREAMING
+        value: "true"
